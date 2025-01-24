@@ -1,0 +1,24 @@
+<style>
+    figure {
+        margin-top: 0;
+        max-width: 100%;
+    }
+    .gallery {
+        column-count: 3;
+    }
+    @media (max-width: 600px) {
+        .gallery {
+            column-count: 1
+        }
+    }
+</style>
+
+<div class="gallery">
+{{ $albumUrl := print "/static/" ($.Get 0) }}
+{{- range readDir $albumUrl -}}
+    {{- $imgURL := print "/" ($.Get 0) "/" .Name -}}
+    <figure>
+        <a href="{{ $imgURL }}"><img src="{{ $imgURL }}" style="float: left; margin-right: 5%; margin-bottom: 5%;"></a>
+    </figure>
+{{- end -}}
+</div>
