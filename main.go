@@ -13,10 +13,11 @@ var fs = http.FileServer(http.Dir("./public"))
 // public-facing load balancer, like nginx, with TLS terminated prior at the
 // load balancer.
 func main() {
-	http.Handle("/", loggingHandler{})
+	lh := loggingHandler{}
+	http.Handle("/", lh)
 
 	fmt.Println("Listening on :1024...")
-	err := http.ListenAndServe(":1024", fs)
+	err := http.ListenAndServe(":1024", lh)
 	if err != nil {
 		fmt.Printf("failed to listen: %v\n", err)
 		os.Exit(1)
@@ -26,7 +27,7 @@ func main() {
 type loggingHandler struct{}
 
 func (lh loggingHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	log.Printf("[WEB] got request for '%s' from '%s\n", req.URL.EscapedPath(), remoteAddr(req))
+	log.Printf("[WEB] serving '%s'->'%s\n", req.URL.EscapedPath(), remoteAddr(req))
 	fs.ServeHTTP(w, req)
 }
 
